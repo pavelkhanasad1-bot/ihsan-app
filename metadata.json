@@ -1,0 +1,6 @@
+{
+  "name": "Ihsan App",
+  "description": "Better Deen, Better Life. A daily Islamic companion app that helps you build a beautiful routine around prayer, adhkar, Quran, and productive habits.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
