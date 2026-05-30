@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -18,32 +17,24 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: gradle
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
-      - name: Create debug keystore
+      - name: Grant execute permission for gradlew
         run: |
-          keytool -genkey -v \
-            -keystore debug.keystore \
-            -alias androiddebugkey \
-            -keyalg RSA \
-            -keysize 2048 \
-            -validity 10000 \
-            -storepass android \
-            -keypass android \
-            -dname "CN=Android Debug,O=Android,C=US"
+          if [ ! -f gradlew ]; then
+            wget https://raw.githubusercontent.com/gradle/gradle/master/gradlew
+            chmod +x gradlew
+          else
+            chmod +x gradlew
+          fi
 
       - name: Create .env file
-        run: |
-          touch .env
-          echo "GEMINI_API_KEY=placeholder" >> .env
+        run: echo "GEMINI_API_KEY=placeholder" > .env
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug --no-daemon --stacktrace
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
